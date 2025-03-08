@@ -1,0 +1,53 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+.vite/
+
+# Logs e depurações
+*.log
+debug.log
+error.log
+*.pid
+*.seed
+*.pid.lock
+
+# Dependências do Composer
+vendor/
+composer.lock
+
+# Diretórios de ambiente
+.env
+.env.local
+.env.*.local
+
+# Arquivos de cache e uploads temporários
+storage/
+cache/
+*.cache
+*.log
+*.sql
+*.sqlite
+*.bak
+*.swp
+
+# Configurações de IDEs e editores
+.idea/
+.vscode/
+*.sublime-workspace
+
+# Arquivos do Docker
+docker-compose.override.yml
+.docker/
+.dockerignore
+
+# MySQL, Redis e outros bancos de dados
+mysql/
+*.sql
+*.sqlite
+data/
+dump.rdb
+
+# Build do frontend
+public/build/
