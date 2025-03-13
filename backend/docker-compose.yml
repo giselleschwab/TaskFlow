@@ -1,0 +1,50 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: taskflow-app
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "80:80"  # Mapeia a porta 80 do container para a porta 80 do host (localhost)
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=taskflow
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD}  # Usando variável do .env
+      - REDIS_HOST=taskflow-redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - taskflow-net
+
+  mysql:
+    image: mysql:5.7
+    container_name: taskflow-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}  # Senha configurada no .env
+      MYSQL_DATABASE: taskflow
+    ports:
+      - "3306:3306"  # Expondo a porta do MySQL
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - taskflow-net
+
+  redis:
+    image: redis:latest
+    container_name: taskflow-redis
+    ports:
+      - "6379:6379"  # Expondo a porta do Redis
+    networks:
+      - taskflow-net
+
+networks:
+  taskflow-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
