@@ -26,7 +26,6 @@ const TaskList: React.FC = () => {
       });
   }, []);
 
-  // Função para filtrar tarefas por status
   const filterTasksByStatus = (status: string) => {
     return tasks.filter(task => task.status === status);
   };
@@ -34,30 +33,32 @@ const TaskList: React.FC = () => {
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (!over || !["pendente", "em andamento", "concluída"].includes(over.id)) return;
+    if (!over || !["pendente", "em andamento", "concluída"].includes(String(over.id))) return;
+
+    const taskId = Number(active.id);
 
     const updatedTasks = tasks.map((task) => {
-      if (task.id === Number(active.id)) {
-        return { ...task, status: over.id };
-      }
-      return task;
+        if (Number(task.id) === taskId) { 
+            return { ...task, status: String(over.id) }; 
+        }
+        return task;
     });
 
-    setTasks(updatedTasks);
+    setTasks(updatedTasks); 
 
     // Enviar para o backend
     axios.post("http://localhost/tasks/update-status", {
-      id: active.id,
-      status: over.id
+        id: taskId,
+        status: over.id
     })
-      .then((response) => {
-        console.log("Status atualizado com sucesso!", response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao atualizar status:", error);
-      });
+    .then((response) => {
+        console.log("✅ Status atualizado com sucesso!", response.data);
+    })
+    .catch((error) => {
+        console.error("❌ Erro ao atualizar status:", error);
+    });
+};
 
-  };
 
   return (
     <div className="bg-dark-gray p-4">
@@ -69,8 +70,10 @@ const TaskList: React.FC = () => {
           {/* Coluna de Pendentes */}
           <Column id="pendente" title="Pendentes" tasks={filterTasksByStatus('pendente')} />
 
+          {/* Coluna de Em Progresso */}
           <Column id="em andamento" title="Em Progresso" tasks={filterTasksByStatus('em andamento')} />
 
+          {/* Coluna de Concluídas */}
           <Column id="concluída" title="Concluídas" tasks={filterTasksByStatus('concluída')} />
         </div>
       </DndContext>
@@ -85,14 +88,14 @@ interface ColumnProps {
 }
 
 const Column: React.FC<ColumnProps> = ({ id, title, tasks }) => {
-  const { setNodeRef } = useDroppable({ id });
+  const { setNodeRef } = useDroppable({ id }); // Garante que a coluna é "droppable"
 
   return (
     <div className="w-1/3" ref={setNodeRef}>
       <h3 className="text-white text-lg">{title}</h3>
       <ul className="text-white">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard key={task.id} task={task} /> // Passa as tarefas para cada TaskCard
         ))}
       </ul>
     </div>
@@ -104,21 +107,21 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
-  const { attributes, listeners, setNodeRef, isDragging, transform, transition } = useDraggable({
-    id: String(task.id),
+  const { attributes, listeners, setNodeRef, isDragging, transform } = useDraggable({
+    id: String(task.id), // Usar o id da tarefa como identificador único para o drag
   });
 
-  // Efeito visual de "grudar" o card ao cursor na hora de arrastar
+  // Estilo aplicado quando a tarefa está sendo arrastada
   const draggingStyle = {
     cursor: 'grabbing',
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : 'none',
     boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)',
-    transition: transition || 'transform 0.1s ease-out',
+    transition: 'transform 0.1s ease-out',
   };
 
   return (
     <li
-      ref={setNodeRef}
+      ref={setNodeRef} // Ref para o item arrastável
       {...attributes}
       {...listeners}
       className="mb-2 bg-gray-800 p-4 rounded-md cursor-pointer"
