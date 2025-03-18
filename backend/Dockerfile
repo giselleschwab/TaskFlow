@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y \
 RUN pecl install redis \
     && docker-php-ext-enable redis
 
-# Habilitar mod_rewrite no Apache para URLs amigáveis
-RUN a2enmod rewrite
+# Habilitar mod_rewrite e mod_headers no Apache
+RUN a2enmod rewrite headers
 
 # Configurar o Apache para apontar para a pasta public do backend
 RUN echo "<VirtualHost *:80>\n\

@@ -18,6 +18,9 @@ class Database
         if ($this->conn->connect_error) {
             die("Connection failed: " . $this->conn->connect_error);
         }
+
+        // Definindo o charset para UTF-8
+        $this->conn->set_charset('utf8');
     }
 
     // Retorna a única instância do banco de dados
