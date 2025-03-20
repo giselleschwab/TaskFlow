@@ -38,45 +38,46 @@ const TaskList: React.FC = () => {
     const taskId = Number(active.id);
 
     const updatedTasks = tasks.map((task) => {
-        if (Number(task.id) === taskId) { 
-            return { ...task, status: String(over.id) }; 
-        }
-        return task;
+      if (Number(task.id) === taskId) {
+        return { ...task, status: String(over.id) };
+      }
+      return task;
     });
 
-    setTasks(updatedTasks); 
+    setTasks(updatedTasks);
 
     // Enviar para o backend
     axios.post("http://localhost/tasks/update-status", {
-        id: taskId,
-        status: over.id
+      id: taskId,
+      status: over.id
     })
-    .then((response) => {
+      .then((response) => {
         console.log("✅ Status atualizado com sucesso!", response.data);
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         console.error("❌ Erro ao atualizar status:", error);
-    });
-};
+      });
+  };
 
 
   return (
-    <div className="bg-dark-gray p-4">
-      <h1 className="text-white text-xl">Minhas Tarefas</h1>
-      <h2 className="text-white mb-4">Aqui vou colocar uma legenda</h2>
-
-      <DndContext onDragEnd={onDragEnd}>
-        <div className="flex gap-8">
-          {/* Coluna de Pendentes */}
-          <Column id="pendente" title="Pendentes" tasks={filterTasksByStatus('pendente')} />
-
-          {/* Coluna de Em Progresso */}
-          <Column id="em andamento" title="Em Progresso" tasks={filterTasksByStatus('em andamento')} />
-
-          {/* Coluna de Concluídas */}
-          <Column id="concluída" title="Concluídas" tasks={filterTasksByStatus('concluída')} />
+    <div className="flex justify-center items-centerbg-dark-gray pt-12">
+      <div className="w-full max-w-7xl px-4">
+        <div className="flex justify-between items-center border-b border-gray-400 mb-4">
+          <div>
+            <h1 className="text-white text-xl">Minhas Tarefas</h1>
+            <h2 className="text-white mb-4">Aqui vou colocar uma legenda</h2>
+          </div>
         </div>
-      </DndContext>
+
+        <DndContext onDragEnd={onDragEnd}>
+          <div className="flex gap-8 pt-8">
+            <Column id="pendente" title="Pendentes" tasks={filterTasksByStatus('pendente')} />
+            <Column id="em andamento" title="Em Progresso" tasks={filterTasksByStatus('em andamento')} />
+            <Column id="concluída" title="Concluídas" tasks={filterTasksByStatus('concluída')} />
+          </div>
+        </DndContext>
+      </div>
     </div>
   );
 };
